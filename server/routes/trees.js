@@ -95,9 +95,17 @@ router.get("/:id", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
   try {
+    const {name, location, height, size} = req.body;
+    const newTree = await Tree.create({
+        tree: name,
+        location,
+        heightFt: height,
+        groundCircumferenceFt: size
+    })
     res.json({
       status: "success",
       message: "Successfully created new tree",
+      data: newTree
     });
   } catch (err) {
     next({
@@ -132,10 +140,31 @@ router.post("/", async (req, res, next) => {
  */
 router.delete("/:id", async (req, res, next) => {
   try {
+    const treeId = req.params.id;
+    // const ids = await Tree.findAll({
+    //     attributes:['id']
+    // });
+
+    // for( let i = 0; i < ids.length; i++){
+    //     if(ids[i].id == treeId){
+    //         const deleteTree = await Tree.findByPk(treeId);
+    //         await deleteTree.destroy();
+    //         res.json({
+    //             status: "success",
+    //             message: `Successfully removed tree ${req.params.id}`,
+    //             });
+    //     }else{
+    //         next()
+    //     }
+    // }
+
+    const deleteTree = await Tree.findByPk(treeId);
+    await deleteTree.destroy();
+    
     res.json({
-      status: "success",
-      message: `Successfully removed tree ${req.params.id}`,
-    });
+        status: "success",
+        message: `Successfully removed tree ${req.params.id}`,
+        });
   } catch (err) {
     next({
       status: "error",
